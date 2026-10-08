@@ -3,67 +3,100 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ENI's MM2 Hub — Riad</title>
-<meta name="description" content="The most complete MM2 script hub. Auto-farm, ESP, silent aim, kill aura. Built for performance. Keyless." />
-<meta property="og:title" content="ENI's MM2 Hub" />
-<meta property="og:description" content="Auto-farm, ESP, silent aim, kill aura. Keyless. Built by Riad." />
+<title>Riad Hub — MM2 Script</title>
+<meta name="description" content="The sleekest MM2 hub. Auto-farm, ESP, silent aim, kill aura. Keyless. Open source." />
+<meta property="og:title" content="Riad Hub" />
+<meta property="og:description" content="Sleek MM2 hub. Keyless. Open source." />
+<meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2350dc78'/%3E%3Cstop offset='1' stop-color='%2328a050'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Ccircle cx='22' cy='10' r='7' fill='%2308060d'/%3E%3C/svg%3E">
 <style>
+  /* ============================================================
+     RESET + BASE
+     ============================================================ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #08060d;
-    color: #f3f0ff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #06080a;
+    color: #e8f0ea;
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
   }
 
-  body::before {
-    content: "";
+  /* ============================================================
+     AURORA BACKGROUND
+     ============================================================ */
+  .aurora {
     position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(147, 51, 234, 0.28), transparent 60%),
-      radial-gradient(ellipse 60% 40% at 80% 60%, rgba(192, 132, 252, 0.12), transparent 55%),
-      radial-gradient(ellipse 60% 40% at 15% 80%, rgba(88, 28, 135, 0.15), transparent 55%);
+    inset: -20%;
     z-index: -2;
     pointer-events: none;
+    filter: blur(80px);
+    opacity: 0.55;
+    animation: drift 24s ease-in-out infinite alternate;
   }
-  body::after {
+  .aurora::before,
+  .aurora::after {
     content: "";
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(147, 51, 234, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(147, 51, 234, 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 80%);
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 80%);
-    z-index: -1;
-    pointer-events: none;
+    position: absolute;
+    border-radius: 50%;
+  }
+  .aurora::before {
+    width: 60vw; height: 60vw;
+    background: radial-gradient(circle, rgba(80, 220, 120, 0.55), transparent 65%);
+    top: -10%; left: -10%;
+  }
+  .aurora::after {
+    width: 55vw; height: 55vw;
+    background: radial-gradient(circle, rgba(40, 160, 90, 0.45), transparent 65%);
+    bottom: -10%; right: -10%;
+  }
+  @keyframes drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(3%, 2%, 0) scale(1.08); }
   }
 
+  /* subtle grid overlay */
+  .grid {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(80, 220, 120, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(80, 220, 120, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 85%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 20%, transparent 85%);
+  }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
     z-index: 100;
-    padding: 16px 0;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(8, 6, 13, 0.72);
-    border-bottom: 1px solid rgba(147, 51, 234, 0.12);
-    transition: padding 0.3s ease;
+    padding: 14px 0;
+    background: rgba(6, 8, 10, 0.65);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border-bottom: 1px solid rgba(80, 220, 120, 0.08);
+    transition: padding 0.35s ease, background 0.35s ease;
   }
-  nav.scrolled { padding: 10px 0; }
+  nav.scrolled {
+    padding: 10px 0;
+    background: rgba(6, 8, 10, 0.85);
+  }
   .nav-inner {
-    max-width: 1200px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -72,74 +105,71 @@
   .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-weight: 800;
-    font-size: 18px;
-    letter-spacing: -0.02em;
-    color: #f3f0ff;
+    gap: 11px;
     text-decoration: none;
+    color: #e8f0ea;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
   }
   .logo-mark {
-    width: 32px; height: 32px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
-    display: grid;
-    place-items: center;
-    box-shadow: 0 0 24px rgba(192, 132, 252, 0.45), inset 0 1px 0 rgba(255,255,255,0.25);
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #50dc78 0%, #28a050 100%);
     position: relative;
+    box-shadow: 0 0 28px rgba(80, 220, 120, 0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+    flex-shrink: 0;
   }
   .logo-mark::after {
     content: "";
     position: absolute;
-    width: 22px; height: 22px;
+    width: 21px; height: 21px;
     border-radius: 50%;
-    background: #08060d;
+    background: #06080a;
     top: -3px; right: -3px;
   }
-  .logo-sub {
-    font-size: 11px;
-    font-weight: 500;
-    color: #9585a8;
-    letter-spacing: 0.08em;
+  .logo-tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: #50dc78;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    margin-left: 4px;
+    margin-left: 2px;
   }
-  .nav-links {
-    display: flex;
-    gap: 28px;
-    align-items: center;
-  }
+  .nav-links { display: flex; gap: 30px; align-items: center; }
   .nav-links a {
-    color: #9585a8;
+    color: #8aa090;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 500;
     transition: color 0.2s;
     position: relative;
   }
-  .nav-links a:hover { color: #f3f0ff; }
+  .nav-links a:hover { color: #e8f0ea; }
   .nav-links a::after {
     content: "";
     position: absolute;
     bottom: -6px; left: 0;
-    width: 0; height: 2px;
-    background: #c084fc;
-    border-radius: 2px;
+    width: 0; height: 1.5px;
+    background: #50dc78;
     transition: width 0.25s ease;
   }
   .nav-links a:hover::after { width: 100%; }
   .nav-cta {
     padding: 9px 18px !important;
     border-radius: 10px !important;
-    background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%) !important;
-    color: #fff !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 16px rgba(147, 51, 234, 0.4);
+    background: linear-gradient(135deg, #50dc78 0%, #28a050 100%) !important;
+    color: #06080a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 6px 20px rgba(80, 220, 120, 0.35);
     transition: transform 0.2s, box-shadow 0.2s !important;
   }
-  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(147, 51, 234, 0.55); }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(80, 220, 120, 0.5); }
   .nav-cta::after { display: none !important; }
 
+  /* ============================================================
+     HERO
+     ============================================================ */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -147,87 +177,93 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 140px 24px 80px;
+    padding: 140px 28px 100px;
     position: relative;
   }
-  .hero-badge {
+  .badge {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 7px 14px;
+    padding: 7px 15px;
     border-radius: 100px;
-    background: rgba(192, 132, 252, 0.08);
-    border: 1px solid rgba(192, 132, 252, 0.22);
+    background: rgba(80, 220, 120, 0.07);
+    border: 1px solid rgba(80, 220, 120, 0.2);
     font-size: 12px;
     font-weight: 600;
-    color: #c084fc;
+    color: #50dc78;
     letter-spacing: 0.03em;
-    margin-bottom: 32px;
-    animation: fadeUp 0.7s ease both;
+    margin-bottom: 34px;
+    animation: fadeUp 0.8s ease both;
   }
-  .hero-badge .pulse {
+  .dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: #4ade80;
-    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
-    animation: pulse 2s infinite;
+    background: #50dc78;
+    box-shadow: 0 0 0 0 rgba(80, 220, 120, 0.7);
+    animation: pulse 2.2s infinite;
   }
   @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(74, 222, 128, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
+    0% { box-shadow: 0 0 0 0 rgba(80, 220, 120, 0.7); }
+    70% { box-shadow: 0 0 0 12px rgba(80, 220, 120, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(80, 220, 120, 0); }
   }
 
-  h1.hero-title {
-    font-size: clamp(48px, 8vw, 96px);
+  .hero h1 {
+    font-size: clamp(52px, 9vw, 112px);
     font-weight: 900;
-    line-height: 1.02;
-    letter-spacing: -0.045em;
-    margin-bottom: 24px;
-    max-width: 900px;
-    animation: fadeUp 0.7s ease 0.1s both;
+    line-height: 0.98;
+    letter-spacing: -0.05em;
+    margin-bottom: 26px;
+    max-width: 940px;
+    animation: fadeUp 0.8s ease 0.1s both;
   }
-  h1.hero-title .grad {
-    background: linear-gradient(135deg, #c084fc 0%, #9333ea 50%, #7e22ce 100%);
+  .hero h1 .grad {
+    background: linear-gradient(135deg, #50dc78 0%, #28a050 60%, #1a6b34 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    position: relative;
+    filter: drop-shadow(0 0 30px rgba(80, 220, 120, 0.35));
   }
-  .hero-sub {
+  .hero .sub {
     font-size: clamp(16px, 1.7vw, 19px);
-    color: #9585a8;
+    color: #8aa090;
     max-width: 620px;
-    margin-bottom: 48px;
-    animation: fadeUp 0.7s ease 0.2s both;
+    margin-bottom: 52px;
+    animation: fadeUp 0.8s ease 0.2s both;
   }
-  .hero-sub strong { color: #f3f0ff; font-weight: 600; }
+  .hero .sub strong { color: #e8f0ea; font-weight: 600; }
 
-  .loadstring-box {
+  /* loadstring box */
+  .loadstring {
     width: 100%;
-    max-width: 720px;
-    background: rgba(19, 16, 28, 0.85);
-    border: 1px solid rgba(147, 51, 234, 0.25);
-    border-radius: 16px;
-    padding: 4px;
+    max-width: 740px;
+    background: rgba(14, 20, 16, 0.7);
+    border: 1px solid rgba(80, 220, 120, 0.18);
+    border-radius: 18px;
+    padding: 5px;
     display: flex;
     align-items: center;
     gap: 8px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
-    animation: fadeUp 0.7s ease 0.3s both;
-    position: relative;
+    backdrop-filter: blur(20px);
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+      0 0 60px rgba(80, 220, 120, 0.08);
+    animation: fadeUp 0.8s ease 0.3s both;
     transition: border-color 0.3s, box-shadow 0.3s;
   }
-  .loadstring-box:hover {
-    border-color: rgba(192, 132, 252, 0.4);
-    box-shadow: 0 20px 60px rgba(147, 51, 234, 0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+  .loadstring:hover {
+    border-color: rgba(80, 220, 120, 0.35);
+    box-shadow:
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+      0 0 80px rgba(80, 220, 120, 0.18);
   }
-  .loadstring-code {
+  .loadstring .code {
     flex: 1;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    color: #c084fc;
+    color: #50dc78;
     padding: 16px 20px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -236,109 +272,114 @@
     user-select: all;
     line-height: 1.5;
   }
-  .loadstring-code .cmd { color: #9585a8; }
-  .loadstring-code .str { color: #4ade80; }
+  .loadstring .code .cmd { color: #6a8070; }
+  .loadstring .code .str { color: #b8e6c4; }
   .copy-btn {
-    padding: 14px 22px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
+    padding: 13px 22px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #50dc78 0%, #28a050 100%);
     border: none;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
+    color: #06080a;
+    font-family: inherit;
+    font-weight: 700;
     font-size: 13px;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 8px;
     transition: transform 0.15s, box-shadow 0.2s, background 0.3s;
-    box-shadow: 0 4px 16px rgba(147, 51, 234, 0.35);
+    box-shadow: 0 8px 24px rgba(80, 220, 120, 0.4);
     white-space: nowrap;
   }
-  .copy-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(147, 51, 234, 0.55); }
+  .copy-btn:hover { transform: translateY(-1px); box-shadow: 0 12px 32px rgba(80, 220, 120, 0.55); }
   .copy-btn:active { transform: translateY(0) scale(0.98); }
   .copy-btn.copied {
-    background: linear-gradient(135deg, #4ade80 0%, #16a34a 100%);
-    box-shadow: 0 4px 16px rgba(74, 222, 128, 0.4);
+    background: linear-gradient(135deg, #50dc78 0%, #28a050 100%);
+    box-shadow: 0 8px 24px rgba(80, 220, 120, 0.7);
   }
   .copy-btn svg { width: 15px; height: 15px; }
 
+  /* stats strip */
   .stats {
     display: flex;
-    gap: 48px;
-    margin-top: 64px;
+    gap: 56px;
+    margin-top: 72px;
     flex-wrap: wrap;
     justify-content: center;
-    animation: fadeUp 0.7s ease 0.4s both;
+    animation: fadeUp 0.8s ease 0.4s both;
   }
   .stat { text-align: center; }
   .stat-val {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 800;
-    letter-spacing: -0.03em;
-    background: linear-gradient(135deg, #fff 0%, #c084fc 100%);
+    letter-spacing: -0.035em;
+    background: linear-gradient(135deg, #ffffff 0%, #50dc78 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    line-height: 1.1;
+    line-height: 1.05;
   }
   .stat-label {
-    font-size: 12px;
-    color: #6a5f7d;
-    font-weight: 500;
-    letter-spacing: 0.06em;
+    font-size: 11px;
+    color: #5a7060;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
+  /* ============================================================
+     SECTION
+     ============================================================ */
   section {
-    padding: 100px 24px;
-    max-width: 1200px;
+    padding: 110px 28px;
+    max-width: 1180px;
     margin: 0 auto;
     position: relative;
   }
-  .section-head {
-    text-align: center;
-    margin-bottom: 64px;
-  }
-  .section-tag {
+  .head { text-align: center; margin-bottom: 68px; }
+  .tag {
     display: inline-block;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    color: #c084fc;
-    letter-spacing: 0.15em;
+    color: #50dc78;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    margin-bottom: 14px;
-    padding: 5px 12px;
-    border-radius: 100px;
-    background: rgba(192, 132, 252, 0.08);
-    border: 1px solid rgba(192, 132, 252, 0.18);
-  }
-  .section-title {
-    font-size: clamp(32px, 4.5vw, 48px);
-    font-weight: 800;
-    letter-spacing: -0.035em;
-    line-height: 1.1;
     margin-bottom: 16px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    background: rgba(80, 220, 120, 0.06);
+    border: 1px solid rgba(80, 220, 120, 0.15);
   }
-  .section-desc {
-    color: #9585a8;
+  h2 {
+    font-size: clamp(34px, 4.5vw, 52px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.08;
+    margin-bottom: 18px;
+  }
+  .desc {
+    color: #8aa090;
     font-size: 16px;
     max-width: 560px;
     margin: 0 auto;
+    line-height: 1.65;
   }
 
+  /* ============================================================
+     FEATURES GRID
+     ============================================================ */
   .features {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 18px;
   }
   .feature {
-    padding: 28px;
+    padding: 30px 28px;
     border-radius: 18px;
-    background: linear-gradient(180deg, rgba(19, 16, 28, 0.85) 0%, rgba(13, 11, 20, 0.85) 100%);
-    border: 1px solid rgba(147, 51, 234, 0.14);
-    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s, box-shadow 0.3s;
+    background: linear-gradient(180deg, rgba(16, 22, 18, 0.75) 0%, rgba(10, 14, 12, 0.9) 100%);
+    border: 1px solid rgba(80, 220, 120, 0.09);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.35s, box-shadow 0.35s, background 0.35s;
     position: relative;
     overflow: hidden;
   }
@@ -347,94 +388,100 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(192, 132, 252, 0.35), transparent);
+    background: linear-gradient(90deg, transparent, rgba(80, 220, 120, 0.5), transparent);
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.35s;
   }
   .feature:hover {
-    transform: translateY(-4px);
-    border-color: rgba(192, 132, 252, 0.3);
-    box-shadow: 0 20px 40px rgba(147, 51, 234, 0.12);
+    transform: translateY(-5px);
+    border-color: rgba(80, 220, 120, 0.3);
+    background: linear-gradient(180deg, rgba(20, 30, 24, 0.9) 0%, rgba(12, 18, 14, 0.95) 100%);
+    box-shadow: 0 24px 56px rgba(80, 220, 120, 0.1), 0 0 0 1px rgba(80, 220, 120, 0.05) inset;
   }
   .feature:hover::before { opacity: 1; }
   .feature-icon {
-    width: 44px; height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, rgba(192, 132, 252, 0.15) 0%, rgba(147, 51, 234, 0.15) 100%);
-    border: 1px solid rgba(192, 132, 252, 0.22);
+    width: 46px; height: 46px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, rgba(80, 220, 120, 0.14) 0%, rgba(40, 160, 90, 0.14) 100%);
+    border: 1px solid rgba(80, 220, 120, 0.2);
     display: grid;
     place-items: center;
-    margin-bottom: 18px;
-    color: #c084fc;
+    margin-bottom: 20px;
+    color: #50dc78;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .feature:hover .feature-icon {
+    transform: scale(1.05);
+    box-shadow: 0 0 24px rgba(80, 220, 120, 0.25);
   }
   .feature-icon svg { width: 22px; height: 22px; }
   .feature h3 {
     font-size: 16px;
     font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.01em;
+    margin-bottom: 9px;
+    letter-spacing: -0.015em;
   }
-  .feature p {
-    font-size: 14px;
-    color: #9585a8;
-    line-height: 1.55;
-  }
+  .feature p { font-size: 14px; color: #8aa090; line-height: 1.6; }
 
+  /* ============================================================
+     HOW TO USE / STEPS
+     ============================================================ */
   .steps {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
+    gap: 26px;
     max-width: 1000px;
     margin: 0 auto;
   }
   .step {
-    padding: 28px;
-    border-radius: 16px;
-    background: rgba(19, 16, 28, 0.6);
-    border: 1px solid rgba(147, 51, 234, 0.12);
+    padding: 32px 28px;
+    border-radius: 18px;
+    background: rgba(14, 20, 16, 0.6);
+    border: 1px solid rgba(80, 220, 120, 0.08);
     position: relative;
+    transition: border-color 0.3s, transform 0.3s;
   }
+  .step:hover { border-color: rgba(80, 220, 120, 0.25); transform: translateY(-3px); }
   .step-num {
     position: absolute;
-    top: -16px; left: 24px;
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
+    top: -18px; left: 26px;
+    width: 38px; height: 38px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #50dc78 0%, #28a050 100%);
     display: grid;
     place-items: center;
     font-weight: 800;
     font-size: 15px;
-    color: #fff;
-    box-shadow: 0 8px 24px rgba(147, 51, 234, 0.4);
+    color: #06080a;
+    box-shadow: 0 10px 28px rgba(80, 220, 120, 0.4), inset 0 1px 0 rgba(255,255,255,0.2);
   }
-  .step h3 {
-    font-size: 16px;
-    font-weight: 700;
-    margin: 12px 0 8px;
-  }
-  .step p { font-size: 14px; color: #9585a8; }
+  .step h3 { font-size: 16px; font-weight: 700; margin: 14px 0 9px; letter-spacing: -0.01em; }
+  .step p { font-size: 14px; color: #8aa090; line-height: 1.6; }
   .step code {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    padding: 2px 6px;
-    border-radius: 5px;
-    background: rgba(192, 132, 252, 0.1);
-    color: #c084fc;
-    border: 1px solid rgba(192, 132, 252, 0.15);
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: rgba(80, 220, 120, 0.09);
+    color: #50dc78;
+    border: 1px solid rgba(80, 220, 120, 0.14);
   }
 
-  .faq-list { max-width: 760px; margin: 0 auto; }
+  /* ============================================================
+     FAQ
+     ============================================================ */
+  .faq { max-width: 780px; margin: 0 auto; }
   .faq-item {
-    border: 1px solid rgba(147, 51, 234, 0.12);
-    border-radius: 14px;
-    margin-bottom: 12px;
+    border: 1px solid rgba(80, 220, 120, 0.08);
+    border-radius: 16px;
+    margin-bottom: 10px;
     overflow: hidden;
-    background: rgba(19, 16, 28, 0.5);
-    transition: border-color 0.3s;
+    background: rgba(14, 20, 16, 0.5);
+    transition: border-color 0.3s, background 0.3s;
   }
-  .faq-item:hover { border-color: rgba(192, 132, 252, 0.25); }
+  .faq-item:hover { border-color: rgba(80, 220, 120, 0.22); background: rgba(16, 22, 18, 0.65); }
   .faq-q {
-    padding: 20px 24px;
+    padding: 22px 26px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -443,29 +490,93 @@
     font-size: 15px;
     user-select: none;
     transition: color 0.2s;
+    letter-spacing: -0.01em;
   }
-  .faq-q:hover { color: #c084fc; }
+  .faq-q:hover { color: #50dc78; }
   .faq-q svg {
     width: 18px; height: 18px;
-    color: #9585a8;
-    transition: transform 0.3s, color 0.3s;
+    color: #6a8070;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.3s;
     flex-shrink: 0;
   }
-  .faq-item.open .faq-q svg { transform: rotate(180deg); color: #c084fc; }
+  .faq-item.open .faq-q svg { transform: rotate(180deg); color: #50dc78; }
   .faq-a {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.35s ease, padding 0.35s ease;
-    padding: 0 24px;
-    color: #9585a8;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    padding: 0 26px;
+    color: #8aa090;
     font-size: 14px;
-    line-height: 1.65;
+    line-height: 1.7;
   }
-  .faq-item.open .faq-a { max-height: 320px; padding: 0 24px 22px; }
+  .faq-item.open .faq-a { max-height: 340px; padding: 0 26px 24px; }
+  .faq-a a { color: #50dc78; text-decoration: none; }
+  .faq-a a:hover { text-decoration: underline; }
+  .faq-a code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: rgba(80, 220, 120, 0.09);
+    color: #50dc78;
+  }
 
+  /* ============================================================
+     CHANGELOG
+     ============================================================ */
+  .changelog {
+    max-width: 780px;
+    margin: 0 auto;
+    border-left: 2px solid rgba(80, 220, 120, 0.15);
+    padding-left: 28px;
+  }
+  .log-entry { position: relative; margin-bottom: 40px; }
+  .log-entry::before {
+    content: "";
+    position: absolute;
+    left: -35px; top: 8px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #50dc78;
+    box-shadow: 0 0 0 4px rgba(80, 220, 120, 0.12);
+  }
+  .log-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: #50dc78;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  .log-title {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  .log-list { list-style: none; padding: 0; }
+  .log-list li {
+    font-size: 14px;
+    color: #8aa090;
+    padding: 5px 0 5px 20px;
+    position: relative;
+    line-height: 1.55;
+  }
+  .log-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #50dc78;
+    opacity: 0.6;
+  }
+  .log-list li strong { color: #e8f0ea; font-weight: 600; }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
   footer {
-    border-top: 1px solid rgba(147, 51, 234, 0.1);
-    padding: 48px 24px 40px;
+    border-top: 1px solid rgba(80, 220, 120, 0.08);
+    padding: 52px 28px 44px;
     text-align: center;
     position: relative;
   }
@@ -474,94 +585,121 @@
     position: absolute;
     top: -1px; left: 50%;
     transform: translateX(-50%);
-    width: 240px; height: 1px;
-    background: linear-gradient(90deg, transparent, #c084fc, transparent);
-    opacity: 0.6;
+    width: 280px; height: 1px;
+    background: linear-gradient(90deg, transparent, #50dc78, transparent);
+    opacity: 0.5;
   }
   .footer-logo {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 11px;
+    margin-bottom: 18px;
     font-weight: 800;
+    font-size: 16px;
     letter-spacing: -0.02em;
   }
   footer p {
-    color: #6a5f7d;
+    color: #5a7060;
     font-size: 13px;
+    line-height: 1.7;
   }
-  footer .heart { color: #c084fc; }
+  footer .heart { color: #50dc78; }
+  footer a { color: #8aa090; text-decoration: none; transition: color 0.2s; }
+  footer a:hover { color: #50dc78; }
 
+  /* ============================================================
+     ANIMATIONS
+     ============================================================ */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(24px); }
+    from { opacity: 0; transform: translateY(28px); }
     to { opacity: 1; transform: translateY(0); }
   }
   .reveal {
     opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    transform: translateY(28px);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
   .reveal.in { opacity: 1; transform: translateY(0); }
 
+  /* ============================================================
+     RESPONSIVE
+     ============================================================ */
   @media (max-width: 720px) {
     .nav-links { display: none; }
-    .stats { gap: 28px; }
-    .stat-val { font-size: 22px; }
-    .loadstring-box { flex-direction: column; align-items: stretch; padding: 12px; }
-    .loadstring-code { text-align: center; white-space: normal; word-break: break-all; font-size: 10px; padding: 8px; }
+    .stats { gap: 32px; }
+    .stat-val { font-size: 24px; }
+    .loadstring { flex-direction: column; align-items: stretch; padding: 12px; }
+    .loadstring .code { text-align: center; white-space: normal; word-break: break-all; font-size: 10px; padding: 10px 8px; }
     .copy-btn { justify-content: center; }
-    section { padding: 64px 20px; }
+    section { padding: 72px 22px; }
+    .changelog { padding-left: 20px; }
+    .log-entry::before { left: -27px; }
   }
 
+  /* ============================================================
+     SCROLLBAR
+     ============================================================ */
   ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #08060d; }
+  ::-webkit-scrollbar-track { background: #06080a; }
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #9333ea 0%, #7e22ce 100%);
+    background: linear-gradient(180deg, #28a050 0%, #1a6b34 100%);
     border-radius: 10px;
-    border: 2px solid #08060d;
+    border: 2px solid #06080a;
   }
-  ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%); }
-
-  ::selection { background: rgba(192, 132, 252, 0.3); color: #fff; }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #50dc78 0%, #28a050 100%);
+  }
+  ::selection { background: rgba(80, 220, 120, 0.3); color: #fff; }
 </style>
 </head>
 <body>
 
+<div class="aurora"></div>
+<div class="grid"></div>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
 <nav id="nav">
   <div class="nav-inner">
     <a href="#" class="logo">
       <span class="logo-mark"></span>
-      ENI's MM2 Hub
-      <span class="logo-sub">by Riad</span>
+      Riad Hub
+      <span class="logo-tag">MM2</span>
     </a>
     <div class="nav-links">
       <a href="#features">Features</a>
-      <a href="#howto">Setup</a>
+      <a href="#setup">Setup</a>
+      <a href="#changelog">Changelog</a>
       <a href="#faq">FAQ</a>
-      <a href="https://github.com/riad185/ENI-mm2-Hub" target="_blank" rel="noopener">GitHub</a>
-      <a href="#load" class="nav-cta">Get Script</a>
+      <a href="https://github.com/riad185" target="_blank" rel="noopener" class="nav-cta">GitHub</a>
     </div>
   </div>
 </nav>
 
+<!-- ============================================================
+     HERO
+     ============================================================ -->
 <header class="hero">
-  <div class="hero-badge">
-    <span class="pulse"></span>
-    Live on GitHub · Always updated
+  <div class="badge">
+    <span class="dot"></span>
+    Live · Keyless · Open Source
   </div>
-  <h1 class="hero-title">
-    The last <span class="grad">MM2 script</span> you'll ever need.
+  <h1>
+    The sleekest<br>
+    <span class="grad">MM2 hub</span><br>
+    you'll ever run.
   </h1>
-  <p class="hero-sub">
-    Auto-farm, silent aim, kill aura, full ESP, config persistence — all in one <strong>sleek WindUI hub</strong>. Keyless. Built for speed.
+  <p class="sub">
+    Auto-farm, silent aim, kill aura, full ESP, fling suite, config persistence — all in one <strong>WindUI-based hub</strong>. Keyless. No key system. No Discord verification.
   </p>
 
-  <div class="loadstring-box" id="load">
-    <div class="loadstring-code">
+  <div class="loadstring" id="load">
+    <div class="code">
       <span class="cmd">loadstring</span>(<span class="str">game:HttpGet("https://raw.githubusercontent.com/riad185/ENI-mm2-Hub/main/Script.lua")</span>)()
     </div>
-    <button class="copy-btn" id="copyBtn" onclick="copyLoadstring()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <button class="copy-btn" onclick="copyLS()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
         <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
         <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
       </svg>
@@ -570,111 +708,81 @@
   </div>
 
   <div class="stats">
-    <div class="stat">
-      <div class="stat-val">40+</div>
-      <div class="stat-label">Features</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">8 Tabs</div>
-      <div class="stat-label">Organized</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">Keyless</div>
-      <div class="stat-label">No System</div>
-    </div>
-    <div class="stat">
-      <div class="stat-val">Open</div>
-      <div class="stat-label">Source</div>
-    </div>
+    <div class="stat"><div class="stat-val">40+</div><div class="stat-label">Features</div></div>
+    <div class="stat"><div class="stat-val">9</div><div class="stat-label">Tabs</div></div>
+    <div class="stat"><div class="stat-val">Keyless</div><div class="stat-label">No System</div></div>
+    <div class="stat"><div class="stat-val">Open</div><div class="stat-label">Source</div></div>
   </div>
 </header>
 
+<!-- ============================================================
+     FEATURES
+     ============================================================ -->
 <section id="features" class="reveal">
-  <div class="section-head">
-    <span class="section-tag">Features</span>
-    <h2 class="section-title">Everything, in one place.</h2>
-    <p class="section-desc">Forty features across eight tabs. Every tool you need, tuned for performance and stability.</p>
+  <div class="head">
+    <span class="tag">Features</span>
+    <h2>Everything, in one place.</h2>
+    <p class="desc">Nine tabs. Forty controls. Every tool you need to dominate Murder Mystery 2, tuned for stability and performance.</p>
   </div>
 
   <div class="features">
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6M12 17v6M4.2 4.2l4.3 4.3M15.5 15.5l4.3 4.3M1 12h6M17 12h6M4.2 19.8l4.3-4.3M15.5 8.5l4.3-4.3"></path></svg>
-      </div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6M12 17v6M4.2 4.2l4.3 4.3M15.5 15.5l4.3 4.3M1 12h6M17 12h6M4.2 19.8l4.3-4.3M15.5 8.5l4.3-4.3"></path></svg></div>
       <h3>Silent Aim</h3>
-      <p>Server-side hit redirection on gun and knife. Aim prediction and ping compensation built in.</p>
+      <p>Server-side raycast redirection on gun and knife. Aim prediction and ping compensation built in.</p>
     </div>
-
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-      </div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg></div>
       <h3>Full ESP Suite</h3>
       <p>Role highlights, chams, 3D boxes, tracers, distance labels — every player, every frame.</p>
     </div>
-
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-      </div>
-      <h3>Kill Aura + Auto-Kill</h3>
-      <p>Strike anyone in range. Configurable range, proximity knife, and instant kill-all button.</p>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg></div>
+      <h3>Kill Aura</h3>
+      <p>Auto-strike anyone in range. Configurable radius, throw-knife mode, silent aim redirection.</p>
     </div>
-
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-      </div>
-      <h3>Auto-Everything</h3>
-      <p>Auto-shoot, auto-stab, auto-equip, full gun grabber. Reacts faster than humanly possible.</p>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg></div>
+      <h3>Teleport Farm</h3>
+      <p>Snap directly to each coin. New teleport method alongside Glide, Tween, and Walk.</p>
     </div>
-
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1"></path></svg>
-      </div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9L4.9 19.1"></path></svg></div>
       <h3>Movement Toolkit</h3>
       <p>Speed, fly, noclip, infinite jump, hitbox expander, anti-void, anti-fling, anti-ragdoll.</p>
     </div>
-
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"></path><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4z"></path></svg>
-      </div>
-      <h3>Coin Farm</h3>
-      <p>Auto-collect coins with Glide/Tween/Walk modes. Safe farming, bag-stop, quick sweep.</p>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1 0-4h12v4"></path><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4z"></path></svg></div>
+      <h3>Config Persistence</h3>
+      <p>Auto-save to disk. Every toggle, slider, and saved coordinate survives between sessions.</p>
     </div>
-
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-      </div>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
       <h3>Survival Suite</h3>
       <p>Murderer avoidance, safety radius, retreat to lobby, proximity alerts, follow mode.</p>
     </div>
-
     <div class="feature">
-      <div class="feature-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-      </div>
-      <h3>Config Persistence</h3>
-      <p>Auto-save to disk. Every toggle, slider, and coordinate survives between sessions.</p>
+      <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+      <h3>Fling Suite</h3>
+      <p>Manual fling buttons plus pre-round toggles for murderer, sheriff, hero, and all players.</p>
     </div>
   </div>
 </section>
 
-<section id="howto" class="reveal">
-  <div class="section-head">
-    <span class="section-tag">Setup</span>
-    <h2 class="section-title">Running in 30 seconds.</h2>
-    <p class="section-desc">Three steps. No key systems. No Discord verification. No nonsense.</p>
+<!-- ============================================================
+     SETUP
+     ============================================================ -->
+<section id="setup" class="reveal">
+  <div class="head">
+    <span class="tag">Setup</span>
+    <h2>Running in 30 seconds.</h2>
+    <p class="desc">Three steps. No key system. No Discord joins. No nonsense.</p>
   </div>
-
   <div class="steps">
     <div class="step">
       <div class="step-num">1</div>
       <h3>Get an executor</h3>
-      <p>Install a modern script executor like <strong>Xeno</strong>, <strong>Wave</strong>, or any injected executor.</p>
+      <p>Install a modern script executor like <strong>Xeno</strong>, <strong>Wave</strong>, or <strong>Solara</strong> on Windows.</p>
     </div>
     <div class="step">
       <div class="step-num">2</div>
@@ -689,147 +797,240 @@
   </div>
 </section>
 
-<section id="faq" class="reveal">
-  <div class="section-head">
-    <span class="section-tag">FAQ</span>
-    <h2 class="section-title">Common questions.</h2>
+<!-- ============================================================
+     CHANGELOG
+     ============================================================ -->
+<section id="changelog" class="reveal">
+  <div class="head">
+    <span class="tag">Changelog</span>
+    <h2>Every update, tracked.</h2>
+    <p class="desc">The full history from v1 to v3.0.</p>
   </div>
 
-  <div class="faq-list">
+  <div class="changelog">
+    <div class="log-entry">
+      <div class="log-version">v3.0</div>
+      <div class="log-title">Teleport farm, round reactions, fling suite</div>
+      <ul class="log-list">
+        <li><strong>Teleport farm method</strong> — snap directly to each coin with configurable delay</li>
+        <li><strong>Round-end notifications</strong> — announces who won based on your role</li>
+        <li><strong>Pre-round fling suite</strong> — murderer, sheriff, hero, all players</li>
+        <li><strong>Fling sheriff during round</strong> — prevents round end</li>
+        <li><strong>Script renamed</strong> — no more old branding anywhere</li>
+      </ul>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-version">v2.2</div>
+      <div class="log-title">Green theme + FPS overlay</div>
+      <ul class="log-list">
+        <li>FPS/Ping overlay with color-coded performance stats</li>
+        <li>Green Thunder-style theme applied to WindUI</li>
+        <li>Search bar enabled, window resize to fit version tag</li>
+      </ul>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-version">v2.1</div>
+      <div class="log-title">Stability pass</div>
+      <ul class="log-list">
+        <li>Fixed undeclared <code>activeConnections</code> table</li>
+        <li>Throttled ESP (15 Hz), Hitbox (10 Hz), Item ESP (2 Hz)</li>
+        <li>One-shot particle disable — no more per-frame loop</li>
+        <li>Edge-triggered proximity alert</li>
+      </ul>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-version">v2.0</div>
+      <div class="log-title">The Identical merge</div>
+      <ul class="log-list">
+        <li>Added Chams, Boxes, Tracers to ESP</li>
+        <li>Added Kill Aura, Auto-Stab, Hitbox Expander</li>
+        <li>Added Survival tools, Fling, Death Notifications</li>
+        <li>Added server hop, role auto-play, saved coordinates</li>
+      </ul>
+    </div>
+
+    <div class="log-entry">
+      <div class="log-version">v1.0</div>
+      <div class="log-title">The original hub</div>
+      <ul class="log-list">
+        <li>Aimbot, Silent Aim, Auto-Shoot</li>
+        <li>Role ESP, ESP Names, ESP Distance</li>
+        <li>Speed, Fly, Noclip, Infinite Jump</li>
+        <li>Coin Farm, Teleports, Config system</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FAQ
+     ============================================================ -->
+<section id="faq" class="reveal">
+  <div class="head">
+    <span class="tag">FAQ</span>
+    <h2>Common questions.</h2>
+  </div>
+
+  <div class="faq">
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
+      <div class="faq-q" onclick="tog(this)">
         Is this script detected?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="faq-a">
-        Every MM2 script carries detection risk — the game uses Roblox's standard replication model. This hub leans on client-side visual features (ESP, cham, Fullbright) that are the safest, and gates the riskier features (Silent Aim, Kill All) behind toggles you control. Use an alt account for testing.
+        Every MM2 script carries detection risk. This hub uses client-side visual features (ESP, chams, Fullbright) that are safest, and gates riskier features (Silent Aim, Kill All, pre-round fling) behind toggles you control. Use an alt account for testing.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
+      <div class="faq-q" onclick="tog(this)">
         Do I need a key?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="faq-a">
-        No. Completely keyless. No linkvertise, no Discord joins, no captcha. Paste the loadstring and it runs. This was the whole point of building it.
+        No. Completely keyless. No linkvertise, no Discord joins, no captcha. Paste the loadstring and it runs.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
+      <div class="faq-q" onclick="tog(this)">
         Will it work on mobile?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="faq-a">
-        Yes. WindUI supports mobile out of the box — the floating toggle button and responsive layout handle touch. Some desktop-centric features (fly with WASD) won't map cleanly to mobile, but ESP, coin farm, and auto-features all work.
+        WindUI supports mobile out of the box. Some features (fly with WASD, keybinds) are tuned for desktop, but ESP, coin farm, and most auto-features work on mobile executors.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
+      <div class="faq-q" onclick="tog(this)">
         How do I save my settings?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="faq-a">
-        It's automatic. Every toggle, slider, and saved coordinate writes to <code>ENI_MM2/config.json</code> inside your executor's workspace folder. Use the Misc tab buttons to manually save, reload, or reset.
+        Automatic. Every toggle, slider, and saved coordinate writes to <code>RiadHub/config.json</code> in your executor's workspace folder. Manual save/reload buttons are in the Misc tab.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
+      <div class="faq-q" onclick="tog(this)">
         Can I see the source code?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="faq-a">
-        Yes. The full source lives on GitHub at <a href="https://github.com/riad185/ENI-mm2-Hub" target="_blank" rel="noopener" style="color:#c084fc;">github.com/riad185/ENI-mm2-Hub</a>. Read it, fork it, suggest changes. It's yours too.
+        Yes. Full source on GitHub at <a href="https://github.com/riad185" target="_blank" rel="noopener">github.com/riad185</a>. Read it, fork it, suggest changes.
       </div>
     </div>
 
     <div class="faq-item">
-      <div class="faq-q" onclick="toggleFaq(this)">
+      <div class="faq-q" onclick="tog(this)">
         A feature stopped working after a game update. What now?
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="faq-a">
-        MM2 periodically patches remote names. When that happens, the affected feature goes quiet until the script is updated. Open an issue on GitHub or ping in the usual place — patches usually land within a day.
+        MM2 patches remote names periodically. When that happens, affected features go quiet until the script is updated. Open an issue on GitHub and it'll get patched.
       </div>
     </div>
   </div>
 </section>
 
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
 <footer>
   <div class="footer-logo">
     <span class="logo-mark"></span>
-    ENI's MM2 Hub
+    Riad Hub
   </div>
   <p>Built with <span class="heart">♥</span> by Riad. Not affiliated with Roblox Corporation.</p>
+  <p style="margin-top: 8px;"><a href="https://github.com/riad185" target="_blank" rel="noopener">GitHub</a></p>
 </footer>
 
 <script>
+  // ============================================================
+  // COPY LOADSTRING
+  // ============================================================
   const LOADSTRING = 'loadstring(game:HttpGet("https://raw.githubusercontent.com/riad185/ENI-mm2-Hub/main/Script.lua"))()';
 
-  function copyLoadstring() {
-    const btn = document.getElementById('copyBtn');
+  function copyLS() {
+    const btn = document.querySelector('.copy-btn');
     const label = document.getElementById('copyLabel');
 
-    navigator.clipboard.writeText(LOADSTRING).then(() => {
+    const done = () => {
       btn.classList.add('copied');
       label.textContent = 'Copied!';
       setTimeout(() => {
         btn.classList.remove('copied');
         label.textContent = 'Copy';
       }, 2000);
-    }).catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = LOADSTRING;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      btn.classList.add('copied');
-      label.textContent = 'Copied!';
-      setTimeout(() => {
-        btn.classList.remove('copied');
-        label.textContent = 'Copy';
-      }, 2000);
-    });
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(LOADSTRING).then(done).catch(() => fallback(done));
+    } else {
+      fallback(done);
+    }
   }
 
+  function fallback(done) {
+    const ta = document.createElement('textarea');
+    ta.value = LOADSTRING;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+    done();
+  }
+
+  // ============================================================
+  // NAV SCROLL
+  // ============================================================
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 20) nav.classList.add('scrolled');
+    if (window.scrollY > 30) nav.classList.add('scrolled');
     else nav.classList.remove('scrolled');
   });
 
-  function toggleFaq(el) {
+  // ============================================================
+  // FAQ ACCORDION
+  // ============================================================
+  function tog(el) {
     const item = el.parentElement;
     const wasOpen = item.classList.contains('open');
     document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
     if (!wasOpen) item.classList.add('open');
   }
 
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('in');
-        revealObserver.unobserve(entry.target);
+  // ============================================================
+  // SCROLL REVEAL
+  // ============================================================
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        obs.unobserve(e.target);
       }
     });
-  }, { threshold: 0.1 });
+  }, { threshold: 0.08 });
 
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
+  // ============================================================
+  // SMOOTH ANCHORS
+  // ============================================================
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', (e) => {
       const id = a.getAttribute('href');
       if (id === '#') return;
-      const target = document.querySelector(id);
-      if (target) {
+      const t = document.querySelector(id);
+      if (t) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     });
   });

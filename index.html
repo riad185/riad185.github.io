@@ -17,6 +17,16 @@
         <link rel="stylesheet" href="templatemo-631-kinetic-style.css">
         <style>
             /* ===== MM2 HUB additions (template vars only) ===== */
+            /* the template locks .reveal to 100vh centred flex — our external
+               section carries 3 content blocks, so degrade the lock or the
+               cap/stage overflow the box both ways and pollute neighbours */
+            #external.reveal {
+                height: auto;
+                min-height: 100vh;
+                justify-content: flex-start;
+                padding-top: 130px;
+                padding-bottom: 90px;
+            }
             .hub-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 26px; }
             .hub-card {
                 flex: 1 1 300px;
@@ -214,8 +224,8 @@
             </div>
             <div class="lenti-stage" id="lentiStage">
                 <div class="lenti" id="lenti" aria-hidden="true"
-                     data-front="images/kinetic-10.jpg"
-                     data-back="images/kinetic-11.jpg"></div>
+                     data-front="images/project-07.jpg"
+                     data-back="images/project-03.jpg"></div>
             </div>
             <div class="hub-row">
                 <div class="hub-card">

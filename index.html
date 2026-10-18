@@ -1,444 +1,357 @@
 <!DOCTYPE html>
-<!-- language: HTML/CSS/JS | target: mm2 hub landing | runtime: any browser, zero deps -->
+<!--
+  MM2 HUB // built on the Kinetic template (templatemo.com/tm-631-kinetic)
+  content: MM2 script hub + Nocturne external — github.com/riad185
+-->
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MM2 Hub — Murder Mystery 2 Script Suite</title>
-<meta name="description" content="MM2 Hub — role ESP, silent aim, auto farm, troll tools and 15+ modules on a sleek Linoria UI.">
-<style>
-:root {
-  --bg: #05060a;
-  --panel: rgba(18, 20, 32, .72);
-  --stroke: rgba(255, 255, 255, .09);
-  --text: #eef0ff;
-  --muted: #9aa0b4;
-  --accent: #7c5cff;
-  --accent2: #4fd1c5;
-  --card: rgba(255, 255, 255, .045);
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  overflow-x: hidden;
-  cursor: default;
-}
-::selection { background: var(--accent); color: #fff; }
-
-/* ---- animated aurora field ---- */
-.scene { position: fixed; inset: 0; z-index: -1; perspective: 1200px; overflow: hidden; }
-.scene::before {
-  content: ''; position: absolute; inset: -40%;
-  background:
-    radial-gradient(38% 40% at 20% 25%, rgba(124, 92, 255, .20), transparent 60%),
-    radial-gradient(34% 34% at 78% 30%, rgba(79, 209, 197, .13), transparent 60%),
-    radial-gradient(44% 42% at 55% 85%, rgba(54, 90, 255, .16), transparent 65%);
-  filter: blur(30px);
-  animation: drift 24s ease-in-out infinite alternate;
-}
-@keyframes drift {
-  from { transform: rotate(0deg) scale(1.1) translate3d(2%, -1%, 0); }
-  to   { transform: rotate(8deg) scale(1.25) translate3d(-2%, 2%, 0); }
-}
-.blob {
-  position: absolute; border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, .06);
-  background: linear-gradient(145deg, rgba(124, 92, 255, .08), rgba(79, 209, 197, .04));
-  transform-style: preserve-3d;
-  animation: floaty 9s ease-in-out infinite;
-}
-.blob:nth-child(1) { width: 260px; height: 260px; top: 12%; left: 6%; animation-delay: 0s; }
-.blob:nth-child(2) { width: 140px; height: 140px; top: 62%; left: 78%; animation-delay: 1.6s; }
-.blob:nth-child(3) { width: 90px; height: 90px; top: 30%; left: 62%; animation-delay: 3.2s; }
-@keyframes floaty {
-  0%, 100% { transform: translateY(0) rotate3d(1, 1, 0, 18deg); }
-  50%      { transform: translateY(-28px) rotate3d(1, 1, 0, -14deg); }
-}
-
-/* ---- nav ---- */
-nav {
-  position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 6px; align-items: center;
-  background: var(--panel); border: 1px solid var(--stroke);
-  border-radius: 999px; padding: 8px 14px; z-index: 50;
-  backdrop-filter: blur(14px);
-}
-nav .logo { font-weight: 800; letter-spacing: .5px; margin-right: 14px; cursor: pointer; }
-nav .logo i { color: var(--accent); font-style: normal; }
-nav a {
-  color: var(--muted); text-decoration: none; font-size: 14px; padding: 7px 13px;
-  border-radius: 999px; transition: .25s;
-}
-nav a:hover { color: var(--text); background: rgba(255, 255, 255, .07); }
-nav .cta {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #fff; font-weight: 700;
-}
-nav .cta:hover { filter: brightness(1.12); }
-
-/* ---- hero ---- */
-.hero { min-height: 92vh; display: grid; place-items: center; text-align: center; padding: 120px 20px 60px; perspective: 1400px; }
-.badge {
-  display: inline-grid; grid-auto-flow: column; gap: 8px; align-items: center;
-  border: 1px solid var(--stroke); background: var(--card);
-  padding: 7px 16px; border-radius: 999px; font-size: 13px; color: var(--muted);
-}
-.badge b { color: var(--accent2); }
-.hero h1 {
-  font-size: clamp(42px, 7.5vw, 92px); font-weight: 900; line-height: 1.02;
-  margin: 20px 0 8px;
-  background: linear-gradient(120deg, #fff 20%, #b6a9ff 55%, #66e6db 90%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.hero p.sub { color: var(--muted); max-width: 640px; margin: 0 auto; font-size: 17px; line-height: 1.6; }
-.hero .actions { display: flex; gap: 14px; justify-content: center; margin-top: 30px; flex-wrap: wrap; }
-.btn {
-  padding: 14px 30px; border-radius: 14px; font-weight: 700; font-size: 15px;
-  color: var(--text); text-decoration: none; border: 1px solid var(--stroke);
-  background: var(--card); transition: .28s; display: inline-block;
-}
-.btn.main {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border: none; color: #fff; box-shadow: 0 14px 40px rgba(124, 92, 255, .35);
-}
-.btn:hover { transform: translateY(-3px) scale(1.03); filter: brightness(1.1); }
-.btn.main:hover { box-shadow: 0 20px 50px rgba(124, 92, 255, .5); }
-
-/* floating 3D hero card */
-.hero-card {
-  width: min(520px, 88vw); margin: 46px auto 0;
-  background: var(--panel); border: 1px solid var(--stroke); border-radius: 20px;
-  padding: 22px; backdrop-filter: blur(16px);
-  transform-style: preserve-3d; transition: transform .15s ease-out;
-  transform: rotateX(6deg) rotateY(-8deg);
-  animation: bob 6s ease-in-out infinite;
-  will-change: transform;
-}
-@keyframes bob { 0%,100% { margin-top: 46px; } 50% { margin-top: 60px; } }
-.hero-card .row { display: flex; justify-content: space-between; padding: 9px 4px; border-bottom: 1px dashed var(--stroke); font-size: 14px; }
-.hero-card .row:last-child { border: none; }
-.hero-card .k { color: var(--muted); }
-.hero-card .v { color: var(--text); font-weight: 600; }
-.hero-card .v.on { color: var(--accent2); }
-
-/* ---- sections ---- */
-section { padding: 74px 20px; max-width: 1100px; margin: 0 auto; }
-.sec-head { text-align: center; margin-bottom: 38px; }
-.sec-head h2 {
-  font-size: clamp(28px, 4.4vw, 46px); font-weight: 850;
-  background: linear-gradient(100deg, #fff, #b6a9ff);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-.sec-head p { color: var(--muted); margin-top: 8px; }
-
-/* ---- tabs ---- */
-.tabs { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 28px; }
-.tab-btn {
-  padding: 11px 22px; border-radius: 12px; border: 1px solid var(--stroke);
-  background: var(--card); color: var(--muted); font-weight: 600; font-size: 14px;
-  transition: .25s; cursor: pointer; transform-style: preserve-3d;
-}
-.tab-btn:hover { color: var(--text); transform: translateY(-2px) rotateX(6deg); }
-.tab-btn.active {
-  color: #fff; border-color: transparent;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  box-shadow: 0 10px 30px rgba(124, 92, 255, .3);
-}
-.panel { display: none; }
-.panel.show { display: block; animation: pop .45s cubic-bezier(.2, .9, .3, 1.2); }
-@keyframes pop { from { opacity: 0; transform: translateY(22px) scale(.97); } }
-
-/* ---- cards ---- */
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; }
-.card {
-  background: var(--card); border: 1px solid var(--stroke); border-radius: 18px;
-  padding: 24px; position: relative; overflow: hidden;
-  transition: transform .3s cubic-bezier(.2,.9,.3,1.3), box-shadow .3s, border-color .3s;
-  transform-style: preserve-3d; will-change: transform;
-}
-.card::after {
-  content: ''; position: absolute; inset: 0; border-radius: 18px;
-  background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 0%),
-    rgba(124, 92, 255, .14), transparent 70%);
-  opacity: 0; transition: opacity .3s; pointer-events: none;
-}
-.card:hover { transform: translateY(-8px) rotateX(3deg) scale(1.015); border-color: rgba(124, 92, 255, .45); box-shadow: 0 24px 60px rgba(0, 0, 0, .45); }
-.card:hover::after { opacity: 1; }
-.card .ico {
-  width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center;
-  font-size: 22px; margin-bottom: 14px;
-  background: linear-gradient(135deg, rgba(124, 92, 255, .25), rgba(79, 209, 197, .18));
-  border: 1px solid var(--stroke);
-  transform: translateZ(28px);
-}
-.card h3 { font-size: 17px; margin-bottom: 8px; font-weight: 700; transform: translateZ(22px); }
-.card p { color: var(--muted); font-size: 14px; line-height: 1.65; }
-.card .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
-.tag {
-  font-size: 11.5px; padding: 4px 10px; border-radius: 999px;
-  border: 1px solid var(--stroke); color: var(--accent2); background: rgba(79, 209, 197, .07);
-}
-
-/* ---- faq ---- */
-.faq { max-width: 780px; margin: 0 auto; }
-.faq-item {
-  background: var(--card); border: 1px solid var(--stroke); border-radius: 14px;
-  margin-bottom: 12px; overflow: hidden; transition: border-color .3s;
-}
-.faq-item:hover { border-color: rgba(124, 92, 255, .4); }
-.faq-q {
-  padding: 18px 22px; font-weight: 600; font-size: 15px; display: flex;
-  justify-content: space-between; align-items: center; gap: 10px; cursor: pointer;
-  user-select: none;
-}
-.faq-q .chev { transition: transform .3s; color: var(--accent2); }
-.faq-item.open .chev { transform: rotate(180deg); }
-.faq-a { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
-.faq-a p { padding: 0 22px 18px; color: var(--muted); font-size: 14px; line-height: 1.7; }
-.faq-item.open .faq-a { max-height: 260px; }
-
-/* ---- footer ---- */
-footer { text-align: center; padding: 46px 20px 60px; color: var(--muted); font-size: 14px; }
-footer .line { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
-footer a { color: var(--text); text-decoration: none; }
-footer a:hover { color: var(--accent2); }
-
-@media (max-width: 640px) { nav { gap: 2px; padding: 6px 10px; } nav a { padding: 6px 9px; font-size: 12.5px; } }
-</style>
-</head>
-<body>
-
-<div class="scene">
-  <div class="blob"></div><div class="blob"></div><div class="blob"></div>
-</div>
-
-<nav>
-  <span class="logo"><i>&#9678;</i> MM2<span> Hub</span></span>
-  <a href="#features">Features</a>
-  <a href="#faq">FAQ</a>
-  <a href="https://github.com/riad185/mm2-hub" target="_blank">GitHub</a>
-  <a href="https://github.com/riad185/mm2-hub" target="_blank" class="cta">Load Script</a>
-</nav>
-
-<header class="hero">
-  <div>
-    <span class="badge">v1 &middot; <b>Linoria UI</b> &middot; RightControl to minimize</span>
-    <h1>MM2 HUB</h1>
-    <p class="sub">Role ESP &middot; silent aim &middot; kill aura &middot; auto farm &middot; teleports &middot; troll tools &mdash;
-    15+ modules on a clean draggable interface you can actually read.</p>
-    <div class="actions">
-      <a class="btn main" href="#features">See Features</a>
-      <a class="btn" href="https://github.com/riad185/mm2-hub" target="_blank">GitHub Repo</a>
-    </div>
-
-    <div class="hero-card" id="heroCard">
-      <div class="row"><span class="k">Role ESP</span><span class="v on">&#10003; box / skeleton / tracers / gun + X-Ray</span></div>
-      <div class="row"><span class="k">Silent aim</span><span class="v on">&#10003; flick speed + ms prediction + wall check</span></div>
-      <div class="row"><span class="k">Kill aura</span><span class="v on">&#10003; radius slider &middot; kill all / sheriff</span></div>
-      <div class="row"><span class="k">Auto farm</span><span class="v on">&#10003; legacy / fast &middot; avoid murderer</span></div>
-      <div class="row"><span class="k">Teleports</span><span class="v">lobby &middot; murderer &middot; sheriff &middot; fling list</span></div>
-      <div class="row"><span class="k">Menu</span><span class="v">9 tabs &middot; themes &middot; config save</span></div>
-    </div>
-  </div>
-</header>
-
-<section id="features">
-  <div class="sec-head">
-    <h2>Everything in one menu</h2>
-    <p>Every module ships as its own file &mdash; Tab through the categories.</p>
-  </div>
-
-  <div class="tabs">
-    <button class="tab-btn active" data-panel="p-combat">Combat</button>
-    <button class="tab-btn" data-panel="p-farm">Farm &amp; Teleport</button>
-    <button class="tab-btn" data-panel="p-visual">Visuals &amp; Lighting</button>
-    <button class="tab-btn" data-panel="p-fun">Fun &amp; Server</button>
-  </div>
-
-  <div id="p-combat" class="panel show">
-    <div class="cards">
-      <div class="card"><div class="ico">&#128065;</div><h3>Role ESP</h3>
-        <p>Box, skeleton, tracers, gun ESP and X-Ray &mdash; with role text, nickname and distance on the label.</p>
-        <div class="tags"><span class="tag">corner / full</span><span class="tag">role filter</span></div></div>
-      <div class="card"><div class="ico">&#127919;</div><h3>Silent Aim</h3>
-        <p>Aim version and aimbot type, flick speed, flick return, prediction in ms, wall check and an FOV circle.</p>
-        <div class="tags"><span class="tag">part / human</span><span class="tag">FOV ring</span></div></div>
-      <div class="card"><div class="ico">&#9876;&#65039;</div><h3>Kill Aura</h3>
-        <p>Radius slider, kill all mode or sheriff only &mdash; from the same toggle.</p>
-        <div class="tags"><span class="tag">radius</span><span class="tag">sheriff only</span></div></div>
-      <div class="card"><div class="ico">&#128047;&#65039;</div><h3>Auto Shoot</h3>
-        <p>Auto pickup gun, auto shoot and auto kill the murderer, auto fling the sheriff &mdash; plus a shoot key.</p>
-        <div class="tags"><span class="tag">hold key</span><span class="tag">pickup</span></div></div>
-      <div class="card"><div class="ico">&#127380;</div><h3>Knife Throw Aimbot</h3>
-        <p>Throws with a wall check and a prediction-lead slider.</p>
-        <div class="tags"><span class="tag">lead slider</span><span class="tag">wall check</span></div></div>
-      <div class="card"><div class="ico">&#128188;</div><h3>Fake Position</h3>
-        <p>Desync with mode, radius and speed &mdash; plus face-threat and a resolver.</p>
-        <div class="tags"><span class="tag">orbit / random</span><span class="tag">resolver</span></div></div>
-    </div>
-  </div>
-
-  <div id="p-farm" class="panel">
-    <div class="cards">
-      <div class="card"><div class="ico">&#128161;</div><h3>Auto Farm</h3>
-        <p>Farm version and speed, auto respawn on a full bag, avoid the murderer, auto fling after respawn.</p>
-        <div class="tags"><span class="tag">legacy / fast</span><span class="tag">master toggle</span></div></div>
-      <div class="card"><div class="ico">&#128694;</div><h3>Movement</h3>
-        <p>No clip, infinite jumps, anti fling, bomb jump, fly, spin and bhop &mdash; each on its own key.</p>
-        <div class="tags"><span class="tag">per-key</span><span class="tag">bhop</span></div></div>
-      <div class="card"><div class="ico">&#9002;&#8255;&#9001;</div><h3>Teleport</h3>
-        <p>Lobby, murderer and sheriff &mdash; plus a per-player fling list.</p>
-        <div class="tags"><span class="tag">3 targets</span><span class="tag">fling list</span></div></div>
-      <div class="card"><div class="ico">&#128089;</div><h3>Free Anims</h3>
-        <p>Animation packs and emotes with speed sliders, hold mode and auto load on respawn.</p>
-        <div class="tags"><span class="tag">10 packs</span><span class="tag">hold key</span></div></div>
-    </div>
-  </div>
-
-  <div id="p-visual" class="panel">
-    <div class="cards">
-      <div class="card"><div class="ico">&#127799;</div><h3>Visuals</h3>
-        <p>Bloom, atmosphere, sun rays, blur, depth of field, ground fog, chams, backtrack and walk trails.</p>
-        <div class="tags"><span class="tag">9 toggles</span></div></div>
-      <div class="card"><div class="ico">&#9733;</div><h3>Lighting Presets</h3>
-        <p>Night, realistic, future, studio, desert and clear atmosphere &mdash; each with its own sliders.</p>
-        <div class="tags"><span class="tag">6 presets</span><span class="tag">sliders</span></div></div>
-      <div class="card"><div class="ico">&#9889;</div><h3>Optimizer</h3>
-        <p>Remove textures, particles, shadows and reflections, low-quality mode and an FPS unlocker to 9999.</p>
-        <div class="tags"><span class="tag">fps 9999</span><span class="tag">low quality</span></div></div>
-    </div>
-  </div>
-
-  <div id="p-fun" class="panel">
-    <div class="cards">
-      <div class="card"><div class="ico">&#127884;</div><h3>Troll Tools</h3>
-        <p>Emotes, toys, fake korblox and headless, walk speed, jump power, touch and click fling, orbit.</p>
-        <div class="tags"><span class="tag">accessories</span><span class="tag">fling</span></div></div>
-      <div class="card"><div class="ico">&#127925;</div><h3>Round Music</h3>
-        <p>Auto play on round start with a random song, a start delay and a local volume slider.</p>
-        <div class="tags"><span class="tag">random</span><span class="tag">delay</span></div></div>
-      <div class="card"><div class="ico">&#127760;</div><h3>Server Tools</h3>
-        <p>Rejoin, server hop, join a small server, copy the job id and anti AFK.</p>
-        <div class="tags"><span class="tag">hop</span><span class="tag">anti afk</span></div></div>
-      <div class="card"><div class="ico">&#128293;</div><h3>Fling Players</h3>
-        <p>A dedicated per-player fling tab: pick a name, auto fling or fling once, clear the list.</p>
-        <div class="tags"><span class="tag">auto</span><span class="tag">list</span></div></div>
-    </div>
-  </div>
-</section>
-
-<section id="faq">
-  <div class="sec-head">
-    <h2>FAQ</h2>
-    <p>Everything before you ask.</p>
-  </div>
-  <div class="faq">
-    <div class="faq-item open">
-      <div class="faq-q">How do I run the hub?<span class="chev">&#9660;</span></div>
-      <div class="faq-a"><p>Paste the loadstring from the GitHub repo's README into your executor while you're
-      in Murder Mystery 2. RightControl opens and minimizes the menu; the toggle key can be rebound in
-      Settings.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Which UI is it built on?<span class="chev">&#9660;</span></div>
-      <div class="faq-a"><p>Linoria Lib &mdash; the same UI family used by well-known hubs. It gives tabs,
-      groupboxes, key pickers per feature, theme manager and per-user config saving out of the box, and
-      every element is wired to its own module file.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Am I getting detected?<span class="chev">&#9660;</span></div>
-      <div class="faq-a"><p>The hub itself is plain Roblox scripting in a public repo &mdash; nothing here
-      edits memory. Staying safe is about your executor more than the script. Do not run anything case
-      features require, and read the FAQ before you enable role ESP or silent aim in a full lobby.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Does farming work while I'm off the keyboard?<span class="chev">&#9660;</span></div>
-      <div class="faq-a"><p>Yes &mdash; auto farm handles respawn on a full bag, steers around the
-      murderer, and can auto-fling whoever spawned near you after you respawn. Anti AFK keeps the
-      session from being kicked while the farm loop runs.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Is the hub open source?<span class="chev">&#9660;</span></div>
-      <div class="faq-a"><p>Fully &mdash; the repo is public. Every module lives in the
-      <code>modules/</code> folder and loads its own logic; if you want to contribute a fix or a new
-      lighting preset, open a pull request and you'll be named in the tab's hourly handles and release
-      notes.</p></div>
-    </div>
-    <div class="faq-item">
-      <div class="faq-q">Will it survive an MM2 update?<span class="chev">&#9660;</span></div>
-      <div class="faq-a"><p>The UI is update-proof and loads live each run. Modules that touch game
-      internals get patched here as fast as the source repos publish their fix &mdash; rejoin with the
-      hub once the update notification posts.</p></div>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <div class="badge">MM2 Hub &middot; <b>Riad185</b> &middot; build <b id="year">2026</b></div>
-  <div class="line">
-    <a href="https://github.com/riad185/mm2-hub" target="_blank">Source</a>
-    <a href="https://github.com/riad185/nocturne" target="_blank">Nocturne External</a>
-    <a href="https://github.com/riad185" target="_blank">Profile</a>
-  </div>
-  <p style="margin-top:16px;font-size:12.5px;color:#606578">Not affiliated with Roblox or MM2. Use responsibly.</p>
-</footer>
-
-<script>
-// hero card 3D tilt
-const heroCard = document.getElementById('heroCard');
-addEventListener('mousemove', (e) => {
-  const r = heroCard.getBoundingClientRect();
-  const x = (e.clientX - r.left) / r.width - .5;
-  const y = (e.clientY - r.top) / r.height - .5;
-  heroCard.style.transform =
-    `rotateX(${(-y * 10 + 6)}deg) rotateY(${(x * 14 - 8)}deg)` + bob_axis();
-});
-function bob_axis() { return heroCard.matches(':hover') ? ' translateZ(18px)' : ''; }
-
-// tab system
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('show'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.panel).classList.add('show');
-  });
-});
-
-// cursor-follow glow on every card
-document.querySelectorAll('.card').forEach(card => {
-  card.addEventListener('mousemove', (e) => {
-    const r = card.getBoundingClientRect();
-    card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-    card.style.setProperty('--my', (e.clientY - r.top) + 'px');
-  });
-  card.addEventListener('mouseenter', () => card.style.setProperty('border-color', 'rgba(124,92,255,.45)'));
-});
-
-// FAQ accordion
-document.querySelectorAll('.faq-q').forEach(q => {
-  q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
-});
-
-// scroll reveal for feature cards
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach((en, i) => {
-    if (en.isIntersecting) {
-      en.target.style.transition = `transform .5s ${i * 60}ms cubic-bezier(.2,.9,.3,1.2), opacity .5s ${i * 60}ms`;
-      en.target.style.transform = 'none';
-      en.target.style.opacity = '1';
-      obs.unobserve(en.target);
-    }
-  });
-}, { threshold: .15 });
-document.querySelectorAll('.panel .card').forEach(c => {
-  c.style.opacity = '0';
-  c.style.transform = 'translateY(30px) scale(.96)';
-  obs.observe(c);
-});
-</script>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>MM2 Hub // Script Suite + Nocturne External</title>
+        <meta name="description"
+              content="MM2 Hub — role ESP, silent aim, kill aura, auto farm on Linoria UI. Nocturne — the external client.">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap"
+              rel="stylesheet">
+        <link rel="stylesheet" href="templatemo-631-kinetic-style.css">
+        <style>
+            /* ===== MM2 HUB additions (template vars only) ===== */
+            .hub-row { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 26px; }
+            .hub-card {
+                flex: 1 1 300px;
+                background: var(--surf-1);
+                border: 1px solid rgba(239, 239, 239, .14);
+                padding: 24px;
+                transition: border-color .3s var(--ease-out), transform .35s var(--ease-out);
+            }
+            .hub-card:hover { border-color: var(--edge-1); transform: translateY(-4px); }
+            .hub-card h3 { font-size: 1.05rem; margin-bottom: 10px; }
+            .hub-card h3 i { color: var(--accent-1); font-style: normal; }
+            .hub-card p { font-size: .8rem; line-height: 1.7; color: rgba(239, 239, 239, .72); }
+            .hub-card .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+            .tag {
+                font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+                padding: 4px 9px; border: 1px solid var(--edge-1); color: var(--accent-1);
+            }
+            .loadstring-box {
+                background: var(--surf-1);
+                border: 1px solid var(--edge-1);
+                padding: 20px 22px;
+                font-size: .84rem;
+                color: var(--accent-1);
+                overflow-x: auto;
+                white-space: pre;
+                max-width: 860px;
+                margin: 0 auto;
+            }
+            .copy-btn {
+                margin-left: 14px;
+                font-family: 'JetBrains Mono', monospace;
+                font-size: .64rem; letter-spacing: .2em; text-transform: uppercase;
+                background: var(--accent-1); color: var(--bg-main);
+                border: none; padding: 8px 16px; cursor: pointer;
+                transition: transform .3s var(--ease-out), background .3s;
+            }
+            .copy-btn:hover { transform: skewX(-8deg); background: #e5ff38; }
+            .faq-wrap { max-width: 820px; margin: 0 auto; }
+            .faq-strip {
+                border: 1px solid rgba(239, 239, 239, .16);
+                margin-bottom: 10px;
+                cursor: pointer;
+                transition: border-color .3s var(--ease-out), background .3s;
+            }
+            .faq-strip:hover { border-color: var(--edge-1); }
+            .faq-strip.open { background: var(--surf-1); }
+            .faq-strip .f-q {
+                display: flex; justify-content: space-between; align-items: center; gap: 14px;
+                padding: 16px 20px; font-size: .84rem; font-weight: 700;
+                font-family: 'Syne', sans-serif; letter-spacing: .02em;
+            }
+            .faq-strip .f-q b { color: var(--accent-1); font-size: .72rem; transition: transform .3s var(--ease-out); }
+            .faq-strip.open .f-q b { transform: rotate(180deg); }
+            .faq-strip .f-a {
+                max-height: 0; overflow: hidden; transition: max-height .4s var(--ease-out);
+            }
+            .faq-strip.open .f-a { max-height: 240px; }
+            .faq-strip .f-a p {
+                padding: 0 20px 18px; font-size: .78rem; line-height: 1.8;
+                color: rgba(239, 239, 239, .68);
+            }
+            .ext-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 28px; }
+            .ext-stat {
+                border: 1px solid rgba(239, 239, 239, .14);
+                background: var(--surf-1);
+                padding: 18px;
+                text-align: center;
+            }
+            .ext-stat .num { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: var(--accent-1); }
+            .ext-stat .lbl { font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: rgba(239, 239, 239, .6); margin-top: 6px; }
+            .ext-actions { display: flex; gap: 14px; margin-top: 26px; flex-wrap: wrap; justify-content: center; }
+            .ext-btn {
+                font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+                padding: 12px 22px; border: 1px solid var(--edge-1); color: var(--text-main);
+                transition: all .3s var(--ease-out);
+            }
+            .ext-btn.main { background: var(--accent-1); color: var(--bg-main); border-color: transparent; }
+            .ext-btn:hover { transform: translateY(-3px) skewX(-6deg); background: var(--accent-1); color: var(--bg-main); }
+        </style>
+    </head>
+    <body>
+        <!-- ====================== TOP BAR ====================== -->
+        <nav class="topbar">
+            <a class="brand" href="#hero">MM2<span>HUB</span></a>
+            <div class="nav-index">
+                <a href="#hero">01 / String</a>
+                <a href="#features">02 / Features</a>
+                <a href="#external">03 / External</a>
+                <a href="#loadstring">04 / Load</a>
+                <a href="#faq">05 / FAQ</a>
+            </div>
+        </nav>
+        <!-- ====================== 01 HERO ====================== -->
+        <section class="hero" id="hero">
+            <h1 class="hero-title">MM<b>2</b> HUB</h1>
+            <svg class="string-svg"
+                 id="stringSvg"
+                 preserveAspectRatio="none"
+                 aria-hidden="true">
+                <path class="string-path" id="stringPath"></path>
+                <circle class="string-anchor" id="anchorL" r="5"></circle>
+                <circle class="string-anchor" id="anchorR" r="5"></circle>
+                <circle class="string-grip"   id="grip"    r="7"></circle>
+            </svg>
+            <div class="hero-foot">
+                <span class="mono-label">Roblox Murder Mystery 2 // Script Suite</span>
+                <p>Role ESP on a Linoria UI you can read. Silent aim with ms prediction. Auto farm that
+                   dodges the murderer. Nine tabs, one RightControl key. Everything loads from source — no
+                   memory edits, no injectors.</p>
+            </div>
+            <div class="hero-hint">[ move cursor to bend the string ]</div>
+        </section>
+        <!-- ====================== 02 FEATURES // MATRIX ACCORDION ====================== -->
+        <section class="matrix-wrap" id="features">
+            <div class="section-head">
+                <h2>THE <i>FEATURE</i> MATRIX</h2>
+                <p>Select any cell to force it open. The others collapse into strips. Nine flagship modules — the full plain-UI list lives in the repo.</p>
+            </div>
+            <div class="matrix" id="matrix">
+                <div class="cell" tabindex="0" role="button" aria-label="Role ESP">
+                    <div class="cell-media" style="background-image:url('images/project-01.jpg')"></div>
+                    <div class="cell-num">01</div>
+                    <div class="cell-name">Role ESP</div>
+                    <div class="cell-detail">Box, skeleton, tracers, gun ESP and X-Ray — with role text, nickname and distance on the label. Innocent / Sheriff / Murderer filters.</div>
+                    <div class="cell-cat">Visuals / ESP</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Silent Aim">
+                    <div class="cell-media" style="background-image:url('images/project-02.jpg')"></div>
+                    <div class="cell-num">02</div>
+                    <div class="cell-name">Silent Aim</div>
+                    <div class="cell-detail">Aim version and aimbot type, flick speed, flick return, prediction in ms, wall check and an FOV circle.</div>
+                    <div class="cell-cat">Combat / Aim</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Kill Aura">
+                    <div class="cell-media" style="background-image:url('images/project-03.jpg')"></div>
+                    <div class="cell-num">03</div>
+                    <div class="cell-name">Kill Aura</div>
+                    <div class="cell-detail">Radius slider, kill all or sheriff only — one toggle decides who drops.</div>
+                    <div class="cell-cat">Combat / Aura</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Auto Shoot">
+                    <div class="cell-media" style="background-image:url('images/project-04.jpg')"></div>
+                    <div class="cell-num">04</div>
+                    <div class="cell-name">Auto Shoot</div>
+                    <div class="cell-detail">Auto pickup gun, auto shoot and auto kill the murderer, auto fling the sheriff — plus a shoot key.</div>
+                    <div class="cell-cat">Combat / Sheriff</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Knife Throw Aimbot">
+                    <div class="cell-media" style="background-image:url('images/project-05.jpg')"></div>
+                    <div class="cell-num">05</div>
+                    <div class="cell-name">Knife Throw</div>
+                    <div class="cell-detail">Throws with a wall check and a prediction-lead slider.</div>
+                    <div class="cell-cat">Combat / Murderer</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Fake Position">
+                    <div class="cell-media" style="background-image:url('images/project-06.jpg')"></div>
+                    <div class="cell-num">06</div>
+                    <div class="cell-name">Fake Position</div>
+                    <div class="cell-detail">Desync with mode, radius and speed — plus face-threat and a resolver.</div>
+                    <div class="cell-cat">Combat / Desync</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Auto Farm">
+                    <div class="cell-media" style="background-image:url('images/project-07.jpg')"></div>
+                    <div class="cell-num">07</div>
+                    <div class="cell-name">Auto Farm</div>
+                    <div class="cell-detail">Farm version and speed, auto respawn on a full bag, avoid the murderer, auto fling after respawn.</div>
+                    <div class="cell-cat">Farm / AFK</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Movement">
+                    <div class="cell-media" style="background-image:url('images/project-08.jpg')"></div>
+                    <div class="cell-num">08</div>
+                    <div class="cell-name">Movement</div>
+                    <div class="cell-detail">No clip, infinite jumps, anti fling, bomb jump, fly, spin and bhop — each on its own key.</div>
+                    <div class="cell-cat">Movement / Keys</div>
+                </div>
+                <div class="cell" tabindex="0" role="button" aria-label="Teleport + Fling">
+                    <div class="cell-media" style="background-image:url('images/project-09.jpg')"></div>
+                    <div class="cell-num">09</div>
+                    <div class="cell-name">Teleport + Fling</div>
+                    <div class="cell-detail">Lobby, murderer and sheriff — plus a per-player fling list with auto-fling.</div>
+                    <div class="cell-cat">Utility / Troll</div>
+                </div>
+            </div>
+        </section>
+        <!-- ====================== 03 EXTERNAL // NOCTURNE ====================== -->
+        <section class="reveal" id="external">
+            <div class="reveal-cap">
+                <span class="mono-label">Nocturne // External Client</span>
+                <h2>SWEEP TO <i>FLIP</i> THE FRAME</h2>
+                <p style="font-size:.64rem;
+                          letter-spacing:.22em;
+                          text-transform:uppercase;
+                          color:var(--accent-1);
+                          margin-top:10px">[ run the cursor past both edges for a full flip ]</p>
+            </div>
+            <div class="lenti-stage" id="lentiStage">
+                <div class="lenti" id="lenti" aria-hidden="true"
+                     data-front="images/kinetic-10.jpg"
+                     data-back="images/kinetic-11.jpg"></div>
+            </div>
+            <div class="hub-row">
+                <div class="hub-card">
+                    <h3><i>&#9650;</i> Nocturne — what it is</h3>
+                    <p>The external overlay client behind the hub's server tools: pure ReadProcessMemory,
+                       no driver, no injection. Full tc-style UI, working themes, live lighting
+                       (skybox / fog / exposure / clock), ESP, aim and movement engines ported with
+                       per-frame read caching so the game doesn't feel it.</p>
+                    <div class="tags">
+                        <span class="tag">RPM core</span><span class="tag">tc UI</span>
+                        <span class="tag">engine ports</span><span class="tag">open source</span>
+                    </div>
+                </div>
+                <div class="hub-card">
+                    <h3><i>&#9650;</i> What it does in-game</h3>
+                    <p>ESP flags with tc's state table, corner boxes, health bars, target warning icons,
+                       aimbot + silent aim threads, speed and fly with write guards, noclip, orbit, hit
+                       tracers, hitsound, menu streams a working console. F8 exits clean.</p>
+                    <div class="tags">
+                        <span class="tag">ESP</span><span class="tag">aim</span>
+                        <span class="tag">movement</span><span class="tag">lighting</span>
+                    </div>
+                </div>
+                <div class="hub-card">
+                    <h3><i>&#9650;</i> Why it exists</h3>
+                    <p>The hub is in-game scripting. Nocturne is the outer layer: overlay rendering,
+                       camera math, engine telemetry — visible to nobody, hiding nothing in-process.
+                       Both are open source on the profile and both update from the same channel.</p>
+                    <div class="tags">
+                        <span class="tag">overlay</span><span class="tag">telemetry</span>
+                        <span class="tag">outside channel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="ext-stats">
+                <div class="ext-stat"><div class="num">30+</div><div class="lbl">features</div></div>
+                <div class="ext-stat"><div class="num">9</div><div class="lbl">menu tabs</div></div>
+                <div class="ext-stat"><div class="num">RPM</div><div class="lbl">no injection</div></div>
+                <div class="ext-stat"><div class="num">x64</div><div class="lbl">windows build</div></div>
+            </div>
+            <div class="ext-actions">
+                <a class="ext-btn main" href="https://github.com/riad185/nocturne" target="_blank">Nocturne Repo</a>
+                <a class="ext-btn" href="https://github.com/riad185/mm2-hub" target="_blank">MM2 Hub Repo</a>
+            </div>
+        </section>
+        <!-- ====================== 04 LOADSTRING ====================== -->
+        <section class="matrix-wrap" id="loadstring" style="padding-top:90px">
+            <div class="section-head">
+                <h2>ONE <i>LINE</i> TO LOAD</h2>
+                <p>Executor open in Murder Mystery 2 → paste → execute. RightControl minimize built in.</p>
+            </div>
+            <div class="loadstring-box" id="lsBox">loadstring(game:HttpGet("https://raw.githubusercontent.com/riad185/mm2-hub/main/main.lua"))();</div>
+            <div style="text-align:center;margin-top:18px">
+                <button class="copy-btn" id="copyBtn">Copy loadstring</button>
+            </div>
+        </section>
+        <!-- ====================== 05 FAQ ====================== -->
+        <section id="faq" style="padding-top:40px">
+            <div class="section-head">
+                <h2>LIVE <i>STRIPS</i> // FAQ</h2>
+                <p>Everything before you ask.</p>
+            </div>
+            <div class="faq-wrap">
+                <div class="faq-strip open">
+                    <div class="f-q">How do I run the hub?<b>&#9660;</b></div>
+                    <div class="f-a"><p>Open your executor inside Murder Mystery 2, paste the loadstring above, execute.
+                    The menu opens itself; RightControl minimizes and restores it, and the toggle key is rebindable in Settings → Menu.</p></div>
+                </div>
+                <div class="faq-strip">
+                    <div class="f-q">Which UI is it built on?<b>&#9660;</b></div>
+                    <div class="f-a"><p>Linoria Lib — tabs, groupboxes, per-feature key pickers, a theme manager with built-in presets, and per-user config
+                    saving. Every control is wired to its own module file under modules/, so features ship independently of the UI.</p></div>
+                </div>
+                <div class="faq-strip">
+                    <div class="f-q">Am I getting detected?<b>&#9660;</b></div>
+                    <div class="f-a"><p>The hub is plain client-side scripting in a public repo — nothing edits memory. Safety depends more on your
+                    executor than on the script. Nocturne is external too: it reads memory out-of-process and never injects.</p></div>
+                </div>
+                <div class="faq-strip">
+                    <div class="f-q">Does auto farm work while I'm off the keyboard?<b>&#9660;</b></div>
+                    <div class="f-a"><p>Yes — it handles respawn when the bag fills, steers around the murderer, and can auto-fling whoever spawned
+                    near you after respawn. Pair it with anti AFK in Server tools and it runs the whole round.</p></div>
+                </div>
+                <div class="faq-strip">
+                    <div class="f-q">Is everything open source?<b>&#9660;</b></div>
+                    <div class="f-a"><p>Fully. The hub and Nocturne both live on github.com/riad185. Pull requests are welcome — a new lighting
+                    preset or a movement mode is a single module file.</p></div>
+                </div>
+                <div class="faq-strip">
+                    <div class="f-q">Will it survive an update?<b>&#9660;</b></div>
+                    <div class="f-a"><p>The UI loads live on every run, so menus survive almost anything. Modules that touch game internals get
+                    patched as fast as their sources publish; the hub pulls fresh modules each execute.</p></div>
+                </div>
+            </div>
+        </section>
+        <!-- ====================== INITIATE ====================== -->
+        <footer class="initiate" id="initiate">
+            <div class="initiate-inner">
+                <h2 class="scatter" id="scatter">MM2HUB // INITIATE</h2>
+                <div class="sub-wrap" id="subWrap">
+                    <a class="ext-btn main" href="#loadstring">Back to loadstring</a>
+                    <a class="ext-btn" href="https://github.com/riad185" target="_blank">github.com/riad185</a>
+                </div>
+                <div class="sub-note" id="subNote">RightControl to minimize. Good hunting.</div>
+            </div>
+            <div class="sig-foot">
+                <span>MM2 Hub // Nocturne External</span>
+                <span>Landing template: Kinetic by <a href="https://templatemo.com" rel="nofollow" target="_blank">TemplateMo</a></span>
+                <span>Not affiliated with Roblox or MM2</span>
+            </div>
+        </footer>
+        <script src="templatemo-631-kinetic-script.js"></script>
+        <script>
+        // loadstring copy
+        const copyBtn = document.getElementById('copyBtn');
+        copyBtn.addEventListener('click', () => {
+            const ls = document.getElementById('lsBox').textContent.trim();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(ls).then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => copyBtn.textContent = 'Copy loadstring', 1600);
+                });
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = ls; document.body.appendChild(ta); ta.select();
+                document.execCommand('copy'); ta.remove();
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => copyBtn.textContent = 'Copy loadstring', 1600);
+            }
+        });
+        // FAQ strips
+        document.querySelectorAll('.faq-strip').forEach(strip => {
+            strip.querySelector('.f-q').addEventListener('click', () => {
+                strip.classList.toggle('open');
+            });
+        });
+        </script>
+    </body>
 </html>
